@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Retire Your Way" />
+  <title>Retire Your Way</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body { background: #0a0a0f; font-family: 'DM Sans', sans-serif; color: #f1f0ee; min-height: 100vh; }
+    .app { max-width: 430px; margin: 0 auto; min-height: 100vh; background: #0d0d14; position: relative; overflow-x: hidden; }
+
+    /* HERO */
+    .hero { background: linear-gradient(135deg, #1a0a2e 0%, #0d1a3a 50%, #0a1f1a 100%); padding: 56px 24px 32px; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 30%, rgba(249,115,22,0.15) 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(56,189,248,0.1) 0%, transparent 50%); }
+    .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: 52px; line-height: 0.9; letter-spacing: 2px; position: relative; }
+    .hero-title span { color: #f97316; }
+    .hero-sub { font-size: 13px; color: #9ca3af; letter-spacing: 3px; text-transform: uppercase; margin-top: 12px; position: relative; }
+    .hero-tagline { font-size: 14px; color: #d1d5db; margin-top: 8px; position: relative; font-weight: 300; }
+
+    /* MODULE GRID */
+    .modules-label { padding: 24px 24px 8px; font-family: 'Bebas Neue', sans-serif; font-size: 13px; letter-spacing: 3px; color: #4b5563; text-transform: uppercase; }
+    .module-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 24px 24px; }
+    .module-card { border-radius: 16px; padding: 20px 16px; cursor: pointer; position: relative; overflow: hidden; transition: transform 0.15s; min-height: 140px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid rgba(255,255,255,0.06); }
+    .module-card:active { transform: scale(0.97); }
+    .module-card::before { content: ''; position: absolute; inset: 0; opacity: 0.85; }
+    .module-card.travel::before { background: linear-gradient(135deg, #9a3412, #7f1d1d); }
+    .module-card.mlb::before { background: linear-gradient(135deg, #075985, #1e3a5f); }
+    .module-card.homeLife::before { background: linear-gradient(135deg, #065f46, #134e4a); }
+    .module-card.hobbies::before { background: linear-gradient(135deg, #4c1d95, #2e1065); }
+    .module-card-content { position: relative; z-index: 1; }
+    .module-icon { font-size: 28px; display: block; margin-bottom: 8px; }
+    .module-label { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1.5px; display: block; }
+    .module-stat { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 4px; }
+    .module-arrow { position: absolute; bottom: 16px; right: 16px; font-size: 18px; opacity: 0.5; z-index: 1; }
+
+    /* NEXT UP */
+    .next-up { margin: 0 24px 32px; background: rgba(249,115,22,0.06); border: 1px solid rgba(249,115,22,0.15); border-radius: 14px; padding: 16px 18px; }
+    .next-up-title { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 1.5px; color: #f97316; margin-bottom: 6px; }
+    .next-up-name { font-size: 14px; color: #d1d5db; font-weight: 500; }
+    .next-up-sub { font-size: 12px; color: #6b7280; margin-top: 3px; }
+    .next-up-tags { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    .tag { font-size: 11px; padding: 3px 10px; border-radius: 10px; }
+
+    /* DETAIL VIEW */
+    .detail-view { position: fixed; inset: 0; background: #0d0d14; z-index: 100; overflow-y: auto; max-width: 430px; margin: 0 auto; }
+    .detail-header { padding: 56px 24px 24px; position: relative; }
+    .detail-header.travel { background: linear-gradient(135deg, #9a3412, #7f1d1d); }
+    .detail-header.mlb { background: linear-gradient(135deg, #075985, #1e3a5f); }
+    .detail-header.homeLife { background: linear-gradient(135deg, #065f46, #134e4a); }
+    .detail-header.hobbies { background: linear-gradient(135deg, #4c1d95, #2e1065); }
+    .back-btn { background: rgba(255,255,255,0.15); border: none; color: white; padding: 8px 16px; border-radius: 20px; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; margin-bottom: 16px; display: inline-flex; align-items: center; gap: 6px; }
+    .detail-mod-icon { font-size: 36px; }
+    .detail-title { font-family: 'Bebas Neue', sans-serif; font-size: 42px; letter-spacing: 2px; }
+    .detail-body { padding: 24px; }
+
+    /* TABS */
+    .tab-row { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 4px; }
+    .tab-row::-webkit-scrollbar { display: none; }
+    .tab { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); color: #9ca3af; padding: 6px 14px; border-radius: 20px; font-size: 13px; cursor: pointer; white-space: nowrap; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+    .tab.active { background: rgba(255,255,255,0.15); color: white; border-color: rgba(255,255,255,0.25); }
+
+    /* SECTION LABEL */
+    .section-label { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 2px; color: #9ca3af; margin-bottom: 14px; }
+    .divider { height: 1px; background: rgba(255,255,255,0.06); margin: 8px 0 24px; }
+
+    /* STAY CARDS */
+    .stay-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-start; }
+    .stay-name { font-weight: 600; font-size: 15px; }
+    .stay-region { font-size: 12px; color: #6b7280; margin-top: 2px; }
+    .stay-year { font-size: 12px; color: #9ca3af; margin-top: 6px; }
+    .visa-tag { font-size: 10px; color: #34d399; background: rgba(52,211,153,0.1); padding: 2px 8px; border-radius: 10px; margin-top: 6px; display: inline-block; }
+    .status-badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 500; white-space: nowrap; }
+
+    /* ROAD TRIP */
+    .road-trip-card { background: linear-gradient(135deg, rgba(249,115,22,0.1), rgba(239,68,68,0.05)); border: 1px solid rgba(249,115,22,0.2); border-radius: 12px; padding: 16px; margin-bottom: 10px; }
+    .road-trip-header { display: flex; justify-content: space-between; align-items: flex-start; }
+    .road-trip-name { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; }
+    .road-trip-meta { font-size: 12px; color: #9ca3af; margin-top: 4px; }
+    .interest-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .interest-tag { font-size: 11px; background: rgba(255,255,255,0.08); padding: 4px 10px; border-radius: 10px; color: #d1d5db; }
+
+    /* MLB */
+    .mlb-progress { background: rgba(255,255,255,0.04); border-radius: 12px; padding: 16px; margin-bottom: 20px; }
+    .mlb-progress-row { display: flex; justify-content: space-between; align-items: center; }
+    .mlb-count { font-size: 22px; font-family: 'Bebas Neue', sans-serif; color: #38bdf8; }
+    .progress-bar { height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-top: 8px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #38bdf8, #0ea5e9); border-radius: 3px; transition: width 0.5s; }
+    .stadium-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .stadium-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 12px; cursor: pointer; transition: all 0.2s; user-select: none; }
+    .stadium-card.visited { background: rgba(56,189,248,0.1); border-color: rgba(56,189,248,0.3); }
+    .stadium-check { font-size: 16px; float: right; }
+    .stadium-team { font-size: 13px; font-weight: 600; }
+    .stadium-city { font-size: 11px; color: #6b7280; margin-top: 2px; }
+
+    /* HOME & HOBBIES */
+    .home-category { margin-bottom: 24px; }
+    .category-header { display: flex; align-items: center; gap: 8px; font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 1px; color: #9ca3af; margin-bottom: 12px; }
+    .activity-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .activity-name { font-size: 14px; font-weight: 500; }
+    .activity-time { font-size: 11px; color: #6b7280; margin-top: 3px; }
+  </style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+const STORAGE_KEY = 'retire-your-way-v1';
+
+const STATUS_COLORS = { dream: '#a78bfa', planned: '#38bdf8', confirmed: '#34d399', completed: '#f59e0b' };
+
+const CATEGORY_ICONS = {
+  'Local Day Trips': '🗺️', 'Home Projects': '🔨', 'Social & Family': '👥', 'Fitness & Health': '💪',
+  'Physical': '🏃', 'Social': '🤝', 'Games': '🃏', 'Creative': '🎨', 'Learning': '🧠'
+};
+
+const DEFAULT_DATA = {
+  travel: {
+    stays: [
+      { id: 1, destination: 'Porto, Portugal', region: 'Iberian Arc', year: 2026, status: 'dream', visa: true },
+      { id: 2, destination: 'Scottish Highlands', region: 'British Isles Arc', year: 2027, status: 'dream', visa: false },
+      { id: 3, destination: 'Dubrovnik, Croatia', region: 'Adriatic Arc', year: 2027, status: 'dream', visa: false },
+      { id: 4, destination: 'Chiang Mai, Thailand', region: 'Asia', year: 2028, status: 'dream', visa: true },
+      { id: 5, destination: 'Buenos Aires, Argentina', region: 'Latin America', year: 2028, status: 'dream', visa: true },
+    ],
+    roadTrips: [
+      { id: 1, name: 'West Road Trip', region: 'North America', year: 2027, status: 'dream',
+        interests: ['National Parks', 'Pacific Coast Hwy', 'MLB Stadiums', 'Cities & Culture', 'Canada (BC, Alberta)'] }
+    ]
+  },
+  mlb: [
+    { id:1, team:'Yankees', city:'New York, NY', visited:false, cluster:'Northeast' },
+    { id:2, team:'Red Sox', city:'Boston, MA', visited:false, cluster:'Northeast' },
+    { id:3, team:'Mets', city:'New York, NY', visited:false, cluster:'Northeast' },
+    { id:4, team:'Phillies', city:'Philadelphia, PA', visited:false, cluster:'Northeast' },
+    { id:5, team:'Orioles', city:'Baltimore, MD', visited:false, cluster:'Northeast' },
+    { id:6, team:'Nationals', city:'Washington, DC', visited:false, cluster:'Northeast' },
+    { id:7, team:'Blue Jays', city:'Toronto, ON', visited:false, cluster:'Northeast' },
+    { id:8, team:'Cubs', city:'Chicago, IL', visited:false, cluster:'Midwest' },
+    { id:9, team:'White Sox', city:'Chicago, IL', visited:false, cluster:'Midwest' },
+    { id:10, team:'Cardinals', city:'St. Louis, MO', visited:false, cluster:'Midwest' },
+    { id:11, team:'Brewers', city:'Milwaukee, WI', visited:false, cluster:'Midwest' },
+    { id:12, team:'Tigers', city:'Detroit, MI', visited:false, cluster:'Midwest' },
+    { id:13, team:'Guardians', city:'Cleveland, OH', visited:false, cluster:'Midwest' },
+    { id:14, team:'Twins', city:'Minneapolis, MN', visited:false, cluster:'Midwest' },
+    { id:15, team:'Pirates', city:'Pittsburgh, PA', visited:false, cluster:'Midwest' },
+    { id:16, team:'Reds', city:'Cincinnati, OH', visited:false, cluster:'Midwest' },
+    { id:17, team:'Royals', city:'Kansas City, MO', visited:false, cluster:'South/Central' },
+    { id:18, team:'Braves', city:'Atlanta, GA', visited:false, cluster:'South/Central' },
+    { id:19, team:'Marlins', city:'Miami, FL', visited:false, cluster:'South/Central' },
+    { id:20, team:'Rays', city:'St. Petersburg, FL', visited:false, cluster:'South/Central' },
+    { id:21, team:'Astros', city:'Houston, TX', visited:false, cluster:'Texas/Rockies/SW' },
+    { id:22, team:'Rangers', city:'Arlington, TX', visited:false, cluster:'Texas/Rockies/SW' },
+    { id:23, team:'Rockies', city:'Denver, CO', visited:false, cluster:'Texas/Rockies/SW' },
+    { id:24, team:'Diamondbacks', city:'Phoenix, AZ', visited:false, cluster:'Texas/Rockies/SW' },
+    { id:25, team:'Athletics', city:'Las Vegas, NV', visited:false, cluster:'West Coast' },
+    { id:26, team:'Dodgers', city:'Los Angeles, CA', visited:false, cluster:'West Coast' },
+    { id:27, team:'Angels', city:'Anaheim, CA', visited:false, cluster:'West Coast' },
+    { id:28, team:'Padres', city:'San Diego, CA', visited:false, cluster:'West Coast' },
+    { id:29, team:'Giants', city:'San Francisco, CA', visited:false, cluster:'West Coast' },
+    { id:30, team:'Mariners', city:'Seattle, WA', visited:false, cluster:'West Coast' },
+  ],
+  homeLife: [
+    { id:1, name:'Farmers market Saturdays', category:'Local Day Trips', timeframe:'Year-round', status:'planned' },
+    { id:2, name:'Explore local day trips & trails', category:'Local Day Trips', timeframe:'Ongoing', status:'planned' },
+    { id:3, name:'Kitchen renovation', category:'Home Projects', timeframe:'Year 1', status:'dream' },
+    { id:4, name:'Gardening — raised beds & food garden', category:'Home Projects', timeframe:'Year 1', status:'dream' },
+    { id:5, name:'Host regular dinner parties', category:'Social & Family', timeframe:'Ongoing', status:'planned' },
+    { id:6, name:'Group travel with friends', category:'Social & Family', timeframe:'Yearly', status:'dream' },
+    { id:7, name:'Movie watchlist nights', category:'Social & Family', timeframe:'Ongoing', status:'planned' },
+    { id:8, name:'Puzzle nights', category:'Social & Family', timeframe:'Ongoing', status:'planned' },
+    { id:9, name:'Daily walk routine', category:'Fitness & Health', timeframe:'Ongoing', status:'planned' },
+    { id:10, name:'Wine tasting & collecting', category:'Fitness & Health', timeframe:'Ongoing', status:'planned' },
+  ],
+  hobbies: [
+    { id:1, name:'Hiking', category:'Physical', status:'planned' },
+    { id:2, name:'Cycling', category:'Physical', status:'planned' },
+    { id:3, name:'Kayaking / paddleboarding', category:'Physical', status:'planned' },
+    { id:4, name:'Golf or disc golf', category:'Physical', status:'dream' },
+    { id:5, name:'Pickleball', category:'Physical', status:'planned' },
+    { id:6, name:'Volunteering', category:'Social', status:'planned' },
+    { id:7, name:'Cribbage', category:'Games', status:'dream' },
+    { id:8, name:'Board game nights', category:'Games', status:'planned' },
+    { id:9, name:'Pottery or ceramics', category:'Creative', status:'dream' },
+    { id:10, name:'Bread & pasta making', category:'Creative', status:'dream' },
+    { id:11, name:'Cooking through world cuisines', category:'Creative', status:'planned' },
+    { id:12, name:'Learn a language', category:'Learning', status:'dream' },
+    { id:13, name:'Deep dive history, art & science', category:'Learning', status:'planned' },
+    { id:14, name:'Woodworking', category:'Learning', status:'dream' },
+  ]
+};
+
+// --- State ---
+let state = { data: null, activeModule: null, mlbFilter: 'All' };
+
+function loadData() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_DATA));
+  } catch { return JSON.parse(JSON.stringify(DEFAULT_DATA)); }
+}
+
+function saveData() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state.data)); } catch {}
+}
+
+// --- Helpers ---
+function statusBadge(status) {
+  const color = STATUS_COLORS[status] || '#9ca3af';
+  return `<span class="status-badge" style="background:${color}20;color:${color}">${status}</span>`;
+}
+
+function groupBy(arr, key) {
+  return arr.reduce((acc, item) => {
+    (acc[item[key]] = acc[item[key]] || []).push(item);
+    return acc;
+  }, {});
+}
+
+// --- Render functions ---
+function renderHome() {
+  const visited = state.data.mlb.filter(s => s.visited).length;
+  const stays = state.data.travel.stays.length;
+  const trips = state.data.travel.roadTrips.length;
+
+  return `
+    <div class="hero">
+      <div class="hero-title">RETIRE<br><span>YOUR</span><br>WAY</div>
+      <div class="hero-sub">Lifestyle Planner</div>
+      <div class="hero-tagline">Travel · Baseball · Home · Hobbies</div>
+    </div>
+    <div class="modules-label">Your Modules</div>
+    <div class="module-grid">
+      <div class="module-card travel" onclick="openModule('travel')">
+        <div class="module-card-content">
+          <span class="module-icon">✈️</span>
+          <span class="module-label">Travel</span>
+          <div class="module-stat">${stays} stays · ${trips} road trip</div>
+        </div>
+        <span class="module-arrow">→</span>
+      </div>
+      <div class="module-card mlb" onclick="openModule('mlb')">
+        <div class="module-card-content">
+          <span class="module-icon">⚾</span>
+          <span class="module-label">MLB Tour</span>
+          <div class="module-stat">${visited}/30 stadiums visited</div>
+        </div>
+        <span class="module-arrow">→</span>
+      </div>
+      <div class="module-card homeLife" onclick="openModule('homeLife')">
+        <div class="module-card-content">
+          <span class="module-icon">🏡</span>
+          <span class="module-label">Home Life</span>
+          <div class="module-stat">${state.data.homeLife.length} activities planned</div>
+        </div>
+        <span class="module-arrow">→</span>
+      </div>
+      <div class="module-card hobbies" onclick="openModule('hobbies')">
+        <div class="module-card-content">
+          <span class="module-icon">🎨</span>
+          <span class="module-label">Hobbies</span>
+          <div class="module-stat">${state.data.hobbies.length} hobbies to explore</div>
+        </div>
+        <span class="module-arrow">→</span>
+      </div>
+    </div>
+    <div class="next-up">
+      <div class="next-up-title">NEXT UP</div>
+      <div class="next-up-name">West Road Trip</div>
+      <div class="next-up-sub">National Parks · PCH · MLB · Canada</div>
+      <div class="next-up-tags">
+        <span class="tag" style="background:rgba(56,189,248,0.1);color:#38bdf8">2027</span>
+        <span class="tag" style="background:rgba(167,139,250,0.1);color:#a78bfa">dream</span>
+        <span class="tag" style="background:rgba(52,211,153,0.1);color:#34d399">🚐 Camper van rental</span>
+      </div>
+    </div>
+  `;
+}
+
+function renderTravel() {
+  const trips = state.data.travel.roadTrips.map(t => `
+    <div class="road-trip-card">
+      <div class="road-trip-header">
+        <div class="road-trip-name">${t.name}</div>
+        ${statusBadge(t.status)}
+      </div>
+      <div class="road-trip-meta">${t.region} · ${t.year}</div>
+      <div class="interest-tags">${t.interests.map(i => `<span class="interest-tag">${i}</span>`).join('')}</div>
+    </div>
+  `).join('');
+
+  const stays = state.data.travel.stays.map(s => `
+    <div class="stay-card">
+      <div>
+        <div class="stay-name">${s.destination}</div>
+        <div class="stay-region">${s.region}</div>
+        <div class="stay-year">📅 ${s.year}</div>
+        ${s.visa ? '<div class="visa-tag">🛂 Visa potential</div>' : ''}
+      </div>
+      <div style="text-align:right">${statusBadge(s.status)}</div>
+    </div>
+  `).join('');
+
+  return `
+    <div class="section-label">ROAD TRIPS</div>
+    ${trips}
+    <div class="divider"></div>
+    <div class="section-label">STAYS</div>
+    ${stays}
+  `;
+}
+
+function renderMLB() {
+  const visited = state.data.mlb.filter(s => s.visited).length;
+  const clusters = ['All', ...new Set(state.data.mlb.map(s => s.cluster))];
+  const filtered = state.mlbFilter === 'All' ? state.data.mlb : state.data.mlb.filter(s => s.cluster === state.mlbFilter);
+  const pct = (visited / 30 * 100).toFixed(1);
+
+  const tabs = clusters.map(c =>
+    `<button class="tab ${state.mlbFilter === c ? 'active' : ''}" onclick="setMLBFilter('${c}')">${c}</button>`
+  ).join('');
+
+  const cards = filtered.map(s => `
+    <div class="stadium-card ${s.visited ? 'visited' : ''}" onclick="toggleStadium(${s.id})">
+      <span class="stadium-check">${s.visited ? '✅' : '⬜'}</span>
+      <div class="stadium-team">${s.team}</div>
+      <div class="stadium-city">${s.city}</div>
+    </div>
+  `).join('');
+
+  return `
+    <div class="mlb-progress">
+      <div class="mlb-progress-row">
+        <span style="font-size:14px;font-weight:600">Stadiums Visited</span>
+        <span class="mlb-count">${visited} / 30</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    </div>
+    <div class="tab-row">${tabs}</div>
+    <div class="stadium-grid">${cards}</div>
+  `;
+}
+
+function renderHomeLife() {
+  const grouped = groupBy(state.data.homeLife, 'category');
+  return Object.entries(grouped).map(([cat, items]) => `
+    <div class="home-category">
+      <div class="category-header"><span>${CATEGORY_ICONS[cat] || '📌'}</span> ${cat}</div>
+      ${items.map(item => `
+        <div class="activity-card">
+          <div>
+            <div class="activity-name">${item.name}</div>
+            <div class="activity-time">${item.timeframe}</div>
+          </div>
+          ${statusBadge(item.status)}
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+function renderHobbies() {
+  const grouped = groupBy(state.data.hobbies, 'category');
+  return Object.entries(grouped).map(([cat, items]) => `
+    <div class="home-category">
+      <div class="category-header"><span>${CATEGORY_ICONS[cat] || '🎯'}</span> ${cat}</div>
+      ${items.map(item => `
+        <div class="activity-card">
+          <div class="activity-name">${item.name}</div>
+          ${statusBadge(item.status)}
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+function renderDetail() {
+  const configs = {
+    travel:   { icon: '✈️', label: 'Travel',    content: renderTravel() },
+    mlb:      { icon: '⚾', label: 'MLB Tour',   content: renderMLB() },
+    homeLife: { icon: '🏡', label: 'Home Life',  content: renderHomeLife() },
+    hobbies:  { icon: '🎨', label: 'Hobbies',    content: renderHobbies() },
+  };
+  const mod = configs[state.activeModule];
+  return `
+    <div class="detail-view">
+      <div class="detail-header ${state.activeModule}">
+        <button class="back-btn" onclick="closeModule()">← Back</button>
+        <div class="detail-mod-icon">${mod.icon}</div>
+        <div class="detail-title">${mod.label}</div>
+      </div>
+      <div class="detail-body">${mod.content}</div>
+    </div>
+  `;
+}
+
+function render() {
+  const app = document.getElementById('app');
+  app.innerHTML = state.activeModule ? renderDetail() : renderHome();
+}
+
+// --- Actions ---
+window.openModule = function(mod) {
+  state.activeModule = mod;
+  render();
+  document.getElementById('app').scrollTop = 0;
+  window.scrollTo(0, 0);
+};
+
+window.closeModule = function() {
+  state.activeModule = null;
+  render();
+  window.scrollTo(0, 0);
+};
+
+window.toggleStadium = function(id) {
+  state.data.mlb = state.data.mlb.map(s => s.id === id ? { ...s, visited: !s.visited } : s);
+  saveData();
+  render();
+};
+
+window.setMLBFilter = function(cluster) {
+  state.mlbFilter = cluster;
+  render();
+};
+
+// --- Init ---
+state.data = loadData();
+render();
+</script>
+</body>
+</html>
