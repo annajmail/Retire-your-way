@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Retire Your Way"/>
+  <meta name="theme-color" content="#0d0d14"/>
+  <title>Retire Your Way</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+    body{background:#0a0a0f;font-family:'DM Sans',sans-serif;color:#f1f0ee;min-height:100vh;overflow-x:hidden}
+    #app{max-width:430px;margin:0 auto;min-height:100vh;background:#0d0d14;position:relative}
+    .hero{background:linear-gradient(135deg,#1a0a2e 0%,#0d1a3a 50%,#0a1f1a 100%);padding:56px 24px 32px;position:relative;overflow:hidden}
+    .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%,rgba(249,115,22,.15),transparent 60%),radial-gradient(ellipse at 20% 80%,rgba(56,189,248,.1),transparent 50%)}
+    .hero-title{font-family:'Bebas Neue',sans-serif;font-size:52px;line-height:.9;letter-spacing:2px;position:relative}
+    .hero-title span{color:#f97316}
+    .hero-sub{font-size:13px;color:#9ca3af;letter-spacing:3px;text-transform:uppercase;margin-top:12px;position:relative}
+    .hero-tag{font-size:14px;color:#d1d5db;margin-top:8px;position:relative;font-weight:300}
+    .mod-label{padding:24px 24px 8px;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:3px;color:#4b5563;text-transform:uppercase}
+    .mod-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 24px 24px}
+    .mod-card{border-radius:16px;padding:20px 16px;cursor:pointer;position:relative;overflow:hidden;transition:transform .15s;min-height:140px;display:flex;flex-direction:column;justify-content:space-between;border:1px solid rgba(255,255,255,.06)}
+    .mod-card:active{transform:scale(.97)}
+    .mod-card::before{content:'';position:absolute;inset:0;opacity:.85}
+    .mod-card.travel::before{background:linear-gradient(135deg,#9a3412,#7f1d1d)}
+    .mod-card.mlb::before{background:linear-gradient(135deg,#075985,#1e3a5f)}
+    .mod-card.homeLife::before{background:linear-gradient(135deg,#065f46,#134e4a)}
+    .mod-card.hobbies::before{background:linear-gradient(135deg,#4c1d95,#2e1065)}
+    .mod-card.custom::before{background:linear-gradient(135deg,#92400e,#78350f)}
+    .mod-inner{position:relative;z-index:1}
+    .mod-icon{font-size:28px;display:block;margin-bottom:8px}
+    .mod-name{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;display:block}
+    .mod-stat{font-size:12px;color:rgba(255,255,255,.6);margin-top:4px}
+    .mod-arrow{position:absolute;bottom:16px;right:16px;font-size:18px;opacity:.5;z-index:1}
+    .add-mod-card{border-radius:16px;padding:20px 16px;cursor:pointer;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px dashed rgba(255,255,255,.12);gap:8px;color:#4b5563;transition:all .2s}
+    .add-mod-card:active{background:rgba(255,255,255,.04)}
+    .add-mod-icon{font-size:28px}
+    .add-mod-label{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;text-align:center}
+    .detail{position:fixed;inset:0;background:#0d0d14;z-index:100;overflow-y:auto;max-width:430px;margin:0 auto}
+    .detail-head{padding:56px 24px 24px}
+    .detail-head.travel{background:linear-gradient(135deg,#9a3412,#7f1d1d)}
+    .detail-head.mlb{background:linear-gradient(135deg,#075985,#1e3a5f)}
+    .detail-head.homeLife{background:linear-gradient(135deg,#065f46,#134e4a)}
+    .detail-head.hobbies{background:linear-gradient(135deg,#4c1d95,#2e1065)}
+    .detail-head.custom{background:linear-gradient(135deg,#92400e,#78350f)}
+    .back-btn{background:rgba(255,255,255,.15);border:none;color:white;padding:8px 16px;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;margin-bottom:16px;display:inline-block}
+    .detail-title{font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:2px}
+    .detail-body{padding:24px}
+    .tab-row{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+    .tab-row::-webkit-scrollbar{display:none}
+    .tab{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:#9ca3af;padding:6px 14px;border-radius:20px;font-size:13px;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif}
+    .tab.active{background:rgba(255,255,255,.15);color:white;border-color:rgba(255,255,255,.25)}
+    .sec-label{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:#9ca3af;margin-bottom:14px}
+    .divider{height:1px;background:rgba(255,255,255,.06);margin:8px 0 24px}
+    .card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;margin-bottom:10px}
+    .card-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+    .card-name{font-weight:600;font-size:15px}
+    .card-sub{font-size:12px;color:#6b7280;margin-top:2px}
+    .card-meta{font-size:12px;color:#9ca3af;margin-top:6px}
+    .visa-tag{font-size:10px;color:#34d399;background:rgba(52,211,153,.1);padding:2px 8px;border-radius:10px;margin-top:6px;display:inline-block}
+    .status-badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;white-space:nowrap}
+    .card-actions{display:flex;gap:8px;margin-top:12px;justify-content:flex-end}
+    .btn-edit{background:rgba(255,255,255,.08);border:none;color:#d1d5db;padding:5px 12px;border-radius:10px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif}
+    .btn-del{background:rgba(239,68,68,.1);border:none;color:#f87171;padding:5px 12px;border-radius:10px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif}
+    .rt-card{background:linear-gradient(135deg,rgba(249,115,22,.1),rgba(239,68,68,.05));border:1px solid rgba(249,115,22,.2);border-radius:12px;padding:16px;margin-bottom:10px}
+    .rt-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px}
+    .int-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+    .int-tag{font-size:11px;background:rgba(255,255,255,.08);padding:4px 10px;border-radius:10px;color:#d1d5db}
+    .mlb-prog{background:rgba(255,255,255,.04);border-radius:12px;padding:16px;margin-bottom:20px}
+    .prog-bar{height:6px;background:rgba(255,255,255,.1);border-radius:3px;margin-top:8px;overflow:hidden}
+    .prog-fill{height:100%;background:linear-gradient(90deg,#38bdf8,#0ea5e9);border-radius:3px;transition:width .5s}
+    .stad-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .stad-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px;cursor:pointer;transition:all .2s;user-select:none}
+    .stad-card.visited{background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.3)}
+    .stad-team{font-size:13px;font-weight:600}
+    .stad-check{font-size:16px;float:right}
+    .cat-group{margin-bottom:24px}
+    .cat-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .cat-head-left{display:flex;align-items:center;gap:8px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:#9ca3af}
+    .btn-del-cat{background:rgba(239,68,68,.08);border:none;color:#f87171;padding:3px 10px;border-radius:8px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif}
+    .act-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px;margin-bottom:8px}
+    .act-row{display:flex;justify-content:space-between;align-items:center}
+    .act-name{font-size:14px;font-weight:500}
+    .act-time{font-size:11px;color:#6b7280;margin-top:3px}
+    .act-desc{font-size:12px;color:#6b7280;margin-top:4px}
+    .add-btn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);border:1px dashed rgba(255,255,255,.15);border-radius:12px;padding:14px 16px;cursor:pointer;width:100%;margin-bottom:16px;color:#9ca3af;font-family:'DM Sans',sans-serif;font-size:14px}
+    .add-cat-btn{display:flex;align-items:center;gap:8px;background:rgba(249,115,22,.06);border:1px dashed rgba(249,115,22,.25);border-radius:12px;padding:12px 16px;cursor:pointer;width:100%;margin-bottom:24px;color:#f97316;font-family:'DM Sans',sans-serif;font-size:13px}
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:flex;align-items:flex-end;justify-content:center}
+    .modal{background:#1a1a2e;border-radius:20px 20px 0 0;padding:24px;width:100%;max-width:430px;max-height:88vh;overflow-y:auto}
+    .modal-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1.5px;margin-bottom:20px}
+    .field{margin-bottom:16px}
+    .field label{font-size:12px;color:#9ca3af;letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:6px}
+    .field input,.field select,.field textarea{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 14px;color:#f1f0ee;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;-webkit-appearance:none}
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(255,255,255,.3)}
+    .field select option{background:#1a1a2e;color:#f1f0ee}
+    .field textarea{resize:none;height:80px}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .emoji-hint{font-size:11px;color:#6b7280;margin-top:4px}
+    .modal-actions{display:flex;gap:10px;margin-top:20px;padding-bottom:8px}
+    .btn-save{flex:1;background:#f97316;border:none;color:white;padding:12px;border-radius:12px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;cursor:pointer}
+    .btn-cancel{flex:1;background:rgba(255,255,255,.08);border:none;color:#9ca3af;padding:12px;border-radius:12px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;cursor:pointer}
+    .visa-check{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;color:#d1d5db}
+    .visa-check input{width:18px;height:18px;cursor:pointer;accent-color:#f97316}
+    .type-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px}
+    .type-opt{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.1);border-radius:10px;padding:10px;cursor:pointer;text-align:center;font-size:13px;color:#9ca3af;transition:all .2s}
+    .type-opt.selected{border-color:#f97316;color:#f97316;background:rgba(249,115,22,.08)}
+    .mod-del-btn{position:absolute;top:20px;right:20px;background:rgba(239,68,68,.15);border:none;color:#f87171;padding:6px 12px;border-radius:10px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;z-index:2}
+  </style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const KEY='retire-your-way-v3';
+const SC={wishlist:'#a78bfa','in progress':'#38bdf8',completed:'#34d399'};
+const STATUSES=['wishlist','in progress','completed'];
+const MONTHS=['','January','February','March','April','May','June','July','August','September','October','November','December'];
+const YEARS=[''].concat(Array.from({length:15},(_,i)=>(2025+i)+''));
+
+// Module types: 'travel','mlb','homeLife','hobbies','custom-hobby','custom-home','custom-simple'
+// custom-hobby: items have name, category, status
+// custom-home: items have name, category, timeframe, status
+// custom-simple: items have name, description, status
+
+const DEF={
+  travel:{
+    stays:[
+      {id:1,destination:'Porto, Portugal',region:'Iberian Arc',month:'',year:'2026',status:'wishlist',visa:true,notes:''},
+      {id:2,destination:'Scottish Highlands',region:'British Isles Arc',month:'',year:'2027',status:'wishlist',visa:false,notes:''},
+      {id:3,destination:'Dubrovnik, Croatia',region:'Adriatic Arc',month:'',year:'2027',status:'wishlist',visa:false,notes:''},
+      {id:4,destination:'Chiang Mai, Thailand',region:'Asia',month:'',year:'2028',status:'wishlist',visa:true,notes:''},
+      {id:5,destination:'Buenos Aires, Argentina',region:'Latin America',month:'',year:'2028',status:'wishlist',visa:true,notes:''},
+    ],
+    roadTrips:[
+      {id:1,name:'West Road Trip',region:'North America',month:'',year:'2027',status:'wishlist',interests:['National Parks','Pacific Coast Hwy','MLB Stadiums','Cities & Culture','Canada (BC, Alberta)'],notes:''}
+    ],
+    regions:[
+      {id:1,name:'Iberian Arc',icon:'🇵🇹',description:'Portugal, Spain'},
+      {id:2,name:'British Isles Arc',icon:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',description:'Scotland, Ireland, England'},
+      {id:3,name:'Adriatic Arc',icon:'⛵',description:'Croatia, Slovenia, Montenegro'},
+      {id:4,name:'Asia',icon:'🌏',description:'Thailand, Japan, Vietnam'},
+      {id:5,name:'Latin America',icon:'🌎',description:'Argentina, Costa Rica, Mexico'},
+      {id:6,name:'North America',icon:'🗺️',description:'Road trips, MLB, Canada'},
+    ]
+  },
+  mlb:[
+    {id:1,team:'Yankees',city:'New York, NY',visited:false,cluster:'Northeast'},
+    {id:2,team:'Red Sox',city:'Boston, MA',visited:false,cluster:'Northeast'},
+    {id:3,team:'Mets',city:'New York, NY',visited:false,cluster:'Northeast'},
+    {id:4,team:'Phillies',city:'Philadelphia, PA',visited:false,cluster:'Northeast'},
+    {id:5,team:'Orioles',city:'Baltimore, MD',visited:false,cluster:'Northeast'},
+    {id:6,team:'Nationals',city:'Washington, DC',visited:false,cluster:'Northeast'},
+    {id:7,team:'Blue Jays',city:'Toronto, ON',visited:false,cluster:'Northeast'},
+    {id:8,team:'Cubs',city:'Chicago, IL',visited:false,cluster:'Midwest'},
+    {id:9,team:'White Sox',city:'Chicago, IL',visited:false,cluster:'Midwest'},
+    {id:10,team:'Cardinals',city:'St. Louis, MO',visited:false,cluster:'Midwest'},
+    {id:11,team:'Brewers',city:'Milwaukee, WI',visited:false,cluster:'Midwest'},
+    {id:12,team:'Tigers',city:'Detroit, MI',visited:false,cluster:'Midwest'},
+    {id:13,team:'Guardians',city:'Cleveland, OH',visited:false,cluster:'Midwest'},
+    {id:14,team:'Twins',city:'Minneapolis, MN',visited:false,cluster:'Midwest'},
+    {id:15,team:'Pirates',city:'Pittsburgh, PA',visited:false,cluster:'Midwest'},
+    {id:16,team:'Reds',city:'Cincinnati, OH',visited:false,cluster:'Midwest'},
+    {id:17,team:'Royals',city:'Kansas City, MO',visited:false,cluster:'South/Central'},
+    {id:18,team:'Braves',city:'Atlanta, GA',visited:false,cluster:'South/Central'},
+    {id:19,team:'Marlins',city:'Miami, FL',visited:false,cluster:'South/Central'},
+    {id:20,team:'Rays',city:'St. Petersburg, FL',visited:false,cluster:'South/Central'},
+    {id:21,team:'Astros',city:'Houston, TX',visited:false,cluster:'Texas/Rockies/SW'},
+    {id:22,team:'Rangers',city:'Arlington, TX',visited:false,cluster:'Texas/Rockies/SW'},
+    {id:23,team:'Rockies',city:'Denver, CO',visited:false,cluster:'Texas/Rockies/SW'},
+    {id:24,team:'Diamondbacks',city:'Phoenix, AZ',visited:false,cluster:'Texas/Rockies/SW'},
+    {id:25,team:'Athletics',city:'Las Vegas, NV',visited:false,cluster:'West Coast'},
+    {id:26,team:'Dodgers',city:'Los Angeles, CA',visited:false,cluster:'West Coast'},
+    {id:27,team:'Angels',city:'Anaheim, CA',visited:false,cluster:'West Coast'},
+    {id:28,team:'Padres',city:'San Diego, CA',visited:false,cluster:'West Coast'},
+    {id:29,team:'Giants',city:'San Francisco, CA',visited:false,cluster:'West Coast'},
+    {id:30,team:'Mariners',city:'Seattle, WA',visited:false,cluster:'West Coast'},
+  ],
+  homeLife:{
+    categories:[
+      {id:1,name:'Local Day Trips',icon:'🗺️',description:'Day adventures near home'},
+      {id:2,name:'Home Projects',icon:'🔨',description:'Things to build or fix'},
+      {id:3,name:'Social & Family',icon:'👥',description:'Time with people we love'},
+      {id:4,name:'Fitness & Health',icon:'💪',description:'Staying active and healthy'},
+    ],
+    items:[
+      {id:1,name:'Farmers market Saturdays',category:'Local Day Trips',timeframe:'Year-round',status:'in progress'},
+      {id:2,name:'Explore local day trips & trails',category:'Local Day Trips',timeframe:'Ongoing',status:'wishlist'},
+      {id:3,name:'Kitchen renovation',category:'Home Projects',timeframe:'Year 1',status:'wishlist'},
+      {id:4,name:'Gardening — raised beds & food garden',category:'Home Projects',timeframe:'Year 1',status:'wishlist'},
+      {id:5,name:'Host regular dinner parties',category:'Social & Family',timeframe:'Ongoing',status:'in progress'},
+      {id:6,name:'Group travel with friends',category:'Social & Family',timeframe:'Yearly',status:'wishlist'},
+      {id:7,name:'Movie watchlist nights',category:'Social & Family',timeframe:'Ongoing',status:'in progress'},
+      {id:8,name:'Puzzle nights',category:'Social & Family',timeframe:'Ongoing',status:'in progress'},
+      {id:9,name:'Daily walk routine',category:'Fitness & Health',timeframe:'Ongoing',status:'in progress'},
+      {id:10,name:'Wine tasting & collecting',category:'Fitness & Health',timeframe:'Ongoing',status:'wishlist'},
+    ]
+  },
+  hobbies:{
+    categories:[
+      {id:1,name:'Physical',icon:'🏃',description:'Active & outdoor pursuits'},
+      {id:2,name:'Social',icon:'🤝',description:'Community & giving back'},
+      {id:3,name:'Games',icon:'🃏',description:'Cards, board games & fun'},
+      {id:4,name:'Creative',icon:'🎨',description:'Making & creating things'},
+      {id:5,name:'Learning',icon:'🧠',description:'Growing & exploring ideas'},
+    ],
+    items:[
+      {id:1,name:'Hiking',category:'Physical',status:'in progress'},
+      {id:2,name:'Cycling',category:'Physical',status:'wishlist'},
+      {id:3,name:'Kayaking / paddleboarding',category:'Physical',status:'wishlist'},
+      {id:4,name:'Golf or disc golf',category:'Physical',status:'wishlist'},
+      {id:5,name:'Pickleball',category:'Physical',status:'wishlist'},
+      {id:6,name:'Volunteering',category:'Social',status:'wishlist'},
+      {id:7,name:'Cribbage',category:'Games',status:'wishlist'},
+      {id:8,name:'Board game nights',category:'Games',status:'in progress'},
+      {id:9,name:'Pottery or ceramics',category:'Creative',status:'wishlist'},
+      {id:10,name:'Bread & pasta making',category:'Creative',status:'wishlist'},
+      {id:11,name:'Cooking through world cuisines',category:'Creative',status:'in progress'},
+      {id:12,name:'Learn a language',category:'Learning',status:'wishlist'},
+      {id:13,name:'Deep dive history, art & science',category:'Learning',status:'in progress'},
+      {id:14,name:'Woodworking',category:'Learning',status:'wishlist'},
+    ]
+  },
+  customModules:[]
+};
+
+let S={data:loadData(),mod:null,mlbF:'All',modal:null,newModType:null};
+
+function loadData(){
+  try{const s=localStorage.getItem(KEY);return s?JSON.parse(s):JSON.parse(JSON.stringify(DEF));}
+  catch{return JSON.parse(JSON.stringify(DEF));}
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S.data));}catch{}}
+function nid(a){return a.length?Math.max(...a.map(i=>i.id))+1:1;}
+function bdg(st){const c=SC[st]||'#9ca3af';return`<span class="status-badge" style="background:${c}20;color:${c}">${st}</span>`;}
+function grp(a,k){return a.reduce((r,i)=>{(r[i[k]]=r[i[k]]||[]).push(i);return r;},{});}
+function vc(){return S.data.mlb.filter(s=>s.visited).length;}
+function tim(i){return[i.month,i.year].filter(Boolean).join(' ');}
+function enc(o){return JSON.stringify(o).replace(/\\/g,'\\\\').replace(/"/g,'&quot;');}
+function sOpts(cur){return STATUSES.map(s=>`<option value="${s}"${cur===s?'selected':''}>${s}</option>`).join('');}
+function mOpts(cur){return MONTHS.map(m=>`<option value="${m}"${cur===m?'selected':''}>${m||'No month'}</option>`).join('');}
+function yOpts(cur){return YEARS.map(y=>`<option value="${y}"${cur===y?'selected':''}>${y||'No year'}</option>`).join('');}
+function g(id){const e=document.getElementById(id);return e?e.value.trim():'';}
+function gc(id){const e=document.getElementById(id);return e?e.checked:false;}
+
+// ===================== MODAL =====================
+function openModal(type,item){S.modal={type,item:item?JSON.parse(JSON.stringify(item)):null};render();}
+function closeModal(){S.modal=null;render();}
+
+function modalHTML(){
+  const{type,item}=S.modal;
+  const isE=!!item;
+
+  // Confirm delete
+  if(type==='confirm'){
+    return`<div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal">
+        <div class="modal-title">Delete?</div>
+        <p style="color:#9ca3af;font-size:14px;margin-bottom:24px">This can't be undone.</p>
+        <div class="modal-actions">
+          <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+          <button class="btn-save" style="background:#ef4444" onclick="confirmDel()">Delete</button>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  // Stay
+  if(type==='stay'){
+    const regOpts=S.data.travel.regions.map(r=>`<option value="${r.name}"${item&&item.region===r.name?'selected':''}>${r.icon} ${r.name}</option>`).join('');
+    return modal(`${isE?'Edit':'Add'} Stay`,`
+      <div class="field"><label>Destination</label><input id="fd" value="${item?item.destination:''}" placeholder="e.g. Lisbon, Portugal"/></div>
+      <div class="field"><label>Region</label><select id="fr">${regOpts}</select></div>
+      <div class="field-row">
+        <div class="field"><label>Month</label><select id="fm">${mOpts(item?item.month:'')}</select></div>
+        <div class="field"><label>Year</label><select id="fy">${yOpts(item?item.year:'')}</select></div>
+      </div>
+      <div class="field"><label>Status</label><select id="fs">${sOpts(item?item.status:'wishlist')}</select></div>
+      <div class="field"><label class="visa-check"><input type="checkbox" id="fv" ${item&&item.visa?'checked':''}/> Retirement visa potential</label></div>
+      <div class="field"><label>Notes</label><textarea id="fn">${item?item.notes:''}</textarea></div>`,
+      `saveM('stay',${isE?item.id:"'null'"})`);
+  }
+
+  // Road trip
+  if(type==='roadtrip'){
+    return modal(`${isE?'Edit':'Add'} Road Trip`,`
+      <div class="field"><label>Trip Name</label><input id="fd" value="${item?item.name:''}" placeholder="e.g. East Coast Road Trip"/></div>
+      <div class="field"><label>Region</label><input id="fr" value="${item?item.region:''}" placeholder="e.g. North America"/></div>
+      <div class="field-row">
+        <div class="field"><label>Month</label><select id="fm">${mOpts(item?item.month:'')}</select></div>
+        <div class="field"><label>Year</label><select id="fy">${yOpts(item?item.year:'')}</select></div>
+      </div>
+      <div class="field"><label>Status</label><select id="fs">${sOpts(item?item.status:'wishlist')}</select></div>
+      <div class="field"><label>Interests (comma separated)</label><input id="fi" value="${item?item.interests.join(', '):''}" placeholder="National Parks, Cities..."/></div>
+      <div class="field"><label>Notes</label><textarea id="fn">${item?item.notes:''}</textarea></div>`,
+      `saveM('roadtrip',${isE?item.id:"'null'"})`);
+  }
+
+  // Travel region
+  if(type==='region'){
+    return modal(`${isE?'Edit':'Add'} Region`,`
+      <div class="field"><label>Region Name</label><input id="fd" value="${item?item.name:''}" placeholder="e.g. Scandinavian Arc"/></div>
+      <div class="field"><label>Icon (emoji)</label><input id="fi" value="${item?item.icon:''}" placeholder="e.g. 🌍" maxlength="4"/>
+        <div class="emoji-hint">Type or paste any emoji</div></div>
+      <div class="field"><label>Description</label><input id="fn" value="${item?item.description:''}" placeholder="e.g. Norway, Sweden, Denmark"/></div>`,
+      `saveM('region',${isE?item.id:"'null'"})`);
+  }
+
+  // Home Life item
+  if(type==='homelife'){
+    const catOpts=S.data.homeLife.categories.map(c=>`<option value="${c.name}"${item&&item.category===c.name?'selected':''}>${c.icon} ${c.name}</option>`).join('');
+    return modal(`${isE?'Edit':'Add'} Activity`,`
+      <div class="field"><label>Activity</label><input id="fd" value="${item?item.name:''}" placeholder="e.g. Wine tasting"/></div>
+      <div class="field"><label>Category</label><select id="fc">${catOpts}</select></div>
+      <div class="field"><label>Timeframe</label><input id="ft" value="${item?item.timeframe:''}" placeholder="e.g. Ongoing, Year 1"/></div>
+      <div class="field"><label>Status</label><select id="fs">${sOpts(item?item.status:'wishlist')}</select></div>`,
+      `saveM('homelife',${isE?item.id:"'null'"})`);
+  }
+
+  // Home Life category
+  if(type==='homecat'){
+    return modal(`${isE?'Edit':'Add'} Category`,`
+      <div class="field"><label>Category Name</label><input id="fd" value="${item?item.name:''}" placeholder="e.g. Wellness"/></div>
+      <div class="field"><label>Icon (emoji)</label><input id="fi" value="${item?item.icon:''}" placeholder="e.g. 🧘" maxlength="4"/>
+        <div class="emoji-hint">Type or paste any emoji</div></div>
+      <div class="field"><label>Description</label><input id="fn" value="${item?item.description:''}" placeholder="e.g. Mind and body care"/></div>`,
+      `saveM('homecat',${isE?item.id:"'null'"})`);
+  }
+
+  // Hobby item
+  if(type==='hobby'){
+    const catOpts=S.data.hobbies.categories.map(c=>`<option value="${c.name}"${item&&item.category===c.name?'selected':''}>${c.icon} ${c.name}</option>`).join('');
+    return modal(`${isE?'Edit':'Add'} Hobby`,`
+      <div class="field"><label>Hobby</label><input id="fd" value="${item?item.name:''}" placeholder="e.g. Pickleball"/></div>
+      <div class="field"><label>Category</label><select id="fc">${catOpts}</select></div>
+      <div class="field"><label>Status</label><select id="fs">${sOpts(item?item.status:'wishlist')}</select></div>`,
+      `saveM('hobby',${isE?item.id:"'null'"})`);
+  }
+
+  // Hobby category
+  if(type==='hobbycat'){
+    return modal(`${isE?'Edit':'Add'} Category`,`
+      <div class="field"><label>Category Name</label><input id="fd" value="${item?item.name:''}" placeholder="e.g. Music"/></div>
+      <div class="field"><label>Icon (emoji)</label><input id="fi" value="${item?item.icon:''}" placeholder="e.g. 🎵" maxlength="4"/>
+        <div class="emoji-hint">Type or paste any emoji</div></div>
+      <div class="field"><label>Description</label><input id="fn" value="${item?item.description:''}" placeholder="e.g. Instruments and listening"/></div>`,
+      `saveM('hobbycat',${isE?item.id:"'null'"})`);
+  }
+
+  // Custom module
+  if(type==='newmodule'){
+    const types=[
+      {k:'custom-hobby',label:'Categories + Items',desc:'Like Hobbies'},
+      {k:'custom-home',label:'Categories + Timeframe',desc:'Like Home Life'},
+      {k:'custom-simple',label:'Simple List',desc:'Name + Status'},
+    ];
+    return`<div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal">
+        <div class="modal-title">New Module</div>
+        <div class="field"><label>Module Name</label><input id="fd" placeholder="e.g. Bucket List"/></div>
+        <div class="field"><label>Icon (emoji)</label><input id="fi" placeholder="e.g. 🎯" maxlength="4"/>
+          <div class="emoji-hint">Type or paste any emoji</div></div>
+        <div class="field"><label>Description</label><input id="fn" placeholder="e.g. Big life goals"/></div>
+        <div class="field"><label>Item Type</label>
+          <div class="type-grid">
+            ${types.map(t=>`<div class="type-opt${S.newModType===t.k?' selected':''}" onclick="setModType('${t.k}')">
+              <div style="font-weight:600">${t.label}</div>
+              <div style="font-size:11px;margin-top:2px;opacity:.7">${t.desc}</div>
+            </div>`).join('')}
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+          <button class="btn-save" onclick="saveNewModule()">Create</button>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  // Custom module item
+  if(type==='customitem'){
+    const mod=S.data.customModules.find(m=>m.id===S.modal.modId);
+    if(!mod)return'';
+    const catOpts=(mod.categories||[]).map(c=>`<option value="${c.name}"${item&&item.category===c.name?'selected':''}>${c.icon||''} ${c.name}</option>`).join('');
+    return modal(`${isE?'Edit':'Add'} Item`,`
+      <div class="field"><label>Name</label><input id="fd" value="${item?item.name:''}" placeholder="Enter name"/></div>
+      ${mod.itemType!=='custom-simple'?`<div class="field"><label>Category</label><select id="fc">${catOpts}</select></div>`:''}
+      ${mod.itemType==='custom-home'?`<div class="field"><label>Timeframe</label><input id="ft" value="${item?item.timeframe||'':''}" placeholder="e.g. Ongoing"/></div>`:''}
+      ${mod.itemType==='custom-simple'?`<div class="field"><label>Description</label><input id="fn" value="${item?item.description||'':''}" placeholder="Optional details"/></div>`:''}
+      <div class="field"><label>Status</label><select id="fs">${sOpts(item?item.status:'wishlist')}</select></div>`,
+      `saveCustomItem(${mod.id},${isE?item.id:"'null'"})`);
+  }
+
+  // Custom module category
+  if(type==='customcat'){
+    const mod=S.data.customModules.find(m=>m.id===S.modal.modId);
+    return modal(`${isE?'Edit':'Add'} Category`,`
+      <div class="field"><label>Category Name</label><input id="fd" value="${item?item.name:''}" placeholder="e.g. Adventure"/></div>
+      <div class="field"><label>Icon (emoji)</label><input id="fi" value="${item?item.icon:''}" placeholder="e.g. 🏔️" maxlength="4"/>
+        <div class="emoji-hint">Type or paste any emoji</div></div>
+      <div class="field"><label>Description</label><input id="fn" value="${item?item.description:''}" placeholder="Optional description"/></div>`,
+      `saveCustomCat(${mod.id},${isE?item.id:"'null'"})`);
+  }
+
+  return '';
+}
+
+function modal(title,fields,saveFn){
+  return`<div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <div class="modal-title">${title}</div>
+      ${fields}
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-save" onclick="${saveFn}">${S.modal&&S.modal.item?'Save':'Add'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ===================== SAVE/DELETE =====================
+window.saveM=function(type,id){
+  const isE=id!=="'null'"&&id!==null;
+  if(type==='stay'){
+    const o={destination:g('fd'),region:g('fr'),month:g('fm'),year:g('fy'),status:g('fs'),visa:gc('fv'),notes:g('fn')};
+    if(!o.destination)return;
+    if(isE)S.data.travel.stays=S.data.travel.stays.map(s=>s.id==id?{...s,...o}:s);
+    else S.data.travel.stays.push({id:nid(S.data.travel.stays),...o});
+  }else if(type==='roadtrip'){
+    const o={name:g('fd'),region:g('fr'),month:g('fm'),year:g('fy'),status:g('fs'),interests:g('fi').split(',').map(s=>s.trim()).filter(Boolean),notes:g('fn')};
+    if(!o.name)return;
+    if(isE)S.data.travel.roadTrips=S.data.travel.roadTrips.map(r=>r.id==id?{...r,...o}:r);
+    else S.data.travel.roadTrips.push({id:nid(S.data.travel.roadTrips),...o});
+  }else if(type==='region'){
+    const o={name:g('fd'),icon:g('fi')||'🌍',description:g('fn')};
+    if(!o.name)return;
+    if(isE)S.data.travel.regions=S.data.travel.regions.map(r=>r.id==id?{...r,...o}:r);
+    else S.data.travel.regions.push({id:nid(S.data.travel.regions),...o});
+  }else if(type==='homelife'){
+    const o={name:g('fd'),category:g('fc'),timeframe:g('ft'),status:g('fs')};
+    if(!o.name)return;
+    if(isE)S.data.homeLife.items=S.data.homeLife.items.map(h=>h.id==id?{...h,...o}:h);
+    else S.data.homeLife.items.push({id:nid(S.data.homeLife.items),...o});
+  }else if(type==='homecat'){
+    const o={name:g('fd'),icon:g('fi')||'📌',description:g('fn')};
+    if(!o.name)return;
+    if(isE)S.data.homeLife.categories=S.data.homeLife.categories.map(c=>c.id==id?{...c,...o}:c);
+    else S.data.homeLife.categories.push({id:nid(S.data.homeLife.categories),...o});
+  }else if(type==='hobby'){
+    const o={name:g('fd'),category:g('fc'),status:g('fs')};
+    if(!o.name)return;
+    if(isE)S.data.hobbies.items=S.data.hobbies.items.map(h=>h.id==id?{...h,...o}:h);
+    else S.data.hobbies.items.push({id:nid(S.data.hobbies.items),...o});
+  }else if(type==='hobbycat'){
+    const o={name:g('fd'),icon:g('fi')||'📌',description:g('fn')};
+    if(!o.name)return;
+    if(isE)S.data.hobbies.categories=S.data.hobbies.categories.map(c=>c.id==id?{...c,...o}:c);
+    else S.data.hobbies.categories.push({id:nid(S.data.hobbies.categories),...o});
+  }
+  save();closeModal();
+};
+
+window.setModType=function(t){S.newModType=t;render();};
+
+window.saveNewModule=function(){
+  const name=g('fd'),icon=g('fi')||'📋',desc=g('fn'),itemType=S.newModType||'custom-simple';
+  if(!name)return;
+  S.data.customModules.push({id:Date.now(),name,icon,description:desc,itemType,categories:[],items:[]});
+  S.newModType=null;
+  save();closeModal();
+};
+
+window.saveCustomItem=function(modId,itemId){
+  const mod=S.data.customModules.find(m=>m.id==modId);
+  if(!mod)return;
+  const isE=itemId!=="'null'"&&itemId!==null;
+  const o={name:g('fd'),category:g('fc')||'',timeframe:g('ft')||'',description:g('fn')||'',status:g('fs')};
+  if(!o.name)return;
+  if(isE)mod.items=mod.items.map(i=>i.id==itemId?{...i,...o}:i);
+  else mod.items.push({id:nid(mod.items),...o});
+  save();closeModal();
+};
+
+window.saveCustomCat=function(modId,catId){
+  const mod=S.data.customModules.find(m=>m.id==modId);
+  if(!mod)return;
+  const isE=catId!=="'null'"&&catId!==null;
+  const o={name:g('fd'),icon:g('fi')||'📌',description:g('fn')||''};
+  if(!o.name)return;
+  if(isE)mod.categories=mod.categories.map(c=>c.id==catId?{...c,...o}:c);
+  else mod.categories.push({id:nid(mod.categories),...o});
+  save();closeModal();
+};
+
+window.delItem=function(type,id,modId){
+  S.modal={type:'confirm',deleteType:type,deleteId:id,deleteModId:modId};render();
+};
+
+window.confirmDel=function(){
+  const{deleteType:type,deleteId:id,deleteModId:modId}=S.modal;
+  if(type==='stay')S.data.travel.stays=S.data.travel.stays.filter(s=>s.id!=id);
+  else if(type==='roadtrip')S.data.travel.roadTrips=S.data.travel.roadTrips.filter(r=>r.id!=id);
+  else if(type==='region')S.data.travel.regions=S.data.travel.regions.filter(r=>r.id!=id);
+  else if(type==='homelife')S.data.homeLife.items=S.data.homeLife.items.filter(h=>h.id!=id);
+  else if(type==='homecat'){
+    S.data.homeLife.categories=S.data.homeLife.categories.filter(c=>c.id!=id);
+    S.data.homeLife.items=S.data.homeLife.items.filter(i=>i.category!==S.modal.deleteName);
+  }
+  else if(type==='hobby')S.data.hobbies.items=S.data.hobbies.items.filter(h=>h.id!=id);
+  else if(type==='hobbycat'){
+    S.data.hobbies.categories=S.data.hobbies.categories.filter(c=>c.id!=id);
+    S.data.hobbies.items=S.data.hobbies.items.filter(i=>i.category!==S.modal.deleteName);
+  }
+  else if(type==='customitem'){const m=S.data.customModules.find(m=>m.id==modId);if(m)m.items=m.items.filter(i=>i.id!=id);}
+  else if(type==='customcat'){const m=S.data.customModules.find(m=>m.id==modId);if(m){const cn=S.modal.deleteName;m.categories=m.categories.filter(c=>c.id!=id);m.items=m.items.filter(i=>i.category!==cn);}}
+  else if(type==='module'){S.data.customModules=S.data.customModules.filter(m=>m.id!=id);S.mod=null;}
+  save();closeModal();
+};
+
+// ===================== RENDER =====================
+function renderHome(){
+  const v=vc();
+  const customCards=S.data.customModules.map(m=>`
+    <div class="mod-card custom" onclick="openMod('custom-${m.id}')">
+      <div class="mod-inner"><span class="mod-icon">${m.icon}</span><span class="mod-name">${m.name}</span>
+      <div class="mod-stat">${m.items.length} items</div></div>
+      <span class="mod-arrow">→</span>
+    </div>`).join('');
+  return`<div class="hero">
+    <div class="hero-title">RETIRE<br><span>YOUR</span><br>WAY</div>
+    <div class="hero-sub">Lifestyle Planner</div>
+    <div class="hero-tag">Travel · Baseball · Home · Hobbies</div>
+  </div>
+  <div class="mod-label">Your Modules</div>
+  <div class="mod-grid">
+    <div class="mod-card travel" onclick="openMod('travel')"><div class="mod-inner"><span class="mod-icon">✈️</span><span class="mod-name">Travel</span><div class="mod-stat">${S.data.travel.stays.length} stays · ${S.data.travel.roadTrips.length} road trips</div></div><span class="mod-arrow">→</span></div>
+    <div class="mod-card mlb" onclick="openMod('mlb')"><div class="mod-inner"><span class="mod-icon">⚾</span><span class="mod-name">MLB Tour</span><div class="mod-stat">${v}/30 stadiums visited</div></div><span class="mod-arrow">→</span></div>
+    <div class="mod-card homeLife" onclick="openMod('homeLife')"><div class="mod-inner"><span class="mod-icon">🏡</span><span class="mod-name">Home Life</span><div class="mod-stat">${S.data.homeLife.items.length} activities</div></div><span class="mod-arrow">→</span></div>
+    <div class="mod-card hobbies" onclick="openMod('hobbies')"><div class="mod-inner"><span class="mod-icon">🎨</span><span class="mod-name">Hobbies</span><div class="mod-stat">${S.data.hobbies.items.length} hobbies</div></div><span class="mod-arrow">→</span></div>
+    ${customCards}
+    <div class="add-mod-card" onclick="openModal('newmodule',null)">
+      <span class="add-mod-icon">＋</span>
+      <span class="add-mod-label">New Module</span>
+    </div>
+  </div>`;
+}
+
+function renderTravel(){
+  const trips=S.data.travel.roadTrips.map(t=>`<div class="rt-card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start"><div class="rt-name">${t.name}</div>${bdg(t.status)}</div>
+    <div style="font-size:12px;color:#9ca3af;margin-top:4px">${t.region}${tim(t)?' · '+tim(t):''}</div>
+    <div class="int-tags">${t.interests.map(i=>`<span class="int-tag">${i}</span>`).join('')}</div>
+    ${t.notes?`<div style="font-size:12px;color:#6b7280;margin-top:8px">${t.notes}</div>`:''}
+    <div class="card-actions">
+      <button class="btn-edit" onclick='openModal("roadtrip",${enc(t)})'>Edit</button>
+      <button class="btn-del" onclick="delItem('roadtrip',${t.id})">Delete</button>
+    </div>
+  </div>`).join('');
+
+  const stays=S.data.travel.stays.map(s=>`<div class="card">
+    <div class="card-row"><div>
+      <div class="card-name">${s.destination}</div>
+      <div class="card-sub">${s.region}</div>
+      ${tim(s)?`<div class="card-meta">📅 ${tim(s)}</div>`:''}
+      ${s.visa?'<div class="visa-tag">🛂 Visa potential</div>':''}
+      ${s.notes?`<div style="font-size:12px;color:#6b7280;margin-top:6px">${s.notes}</div>`:''}
+    </div><div>${bdg(s.status)}</div></div>
+    <div class="card-actions">
+      <button class="btn-edit" onclick='openModal("stay",${enc(s)})'>Edit</button>
+      <button class="btn-del" onclick="delItem('stay',${s.id})">Delete</button>
+    </div>
+  </div>`).join('');
+
+  const regions=S.data.travel.regions.map(r=>`<div class="card">
+    <div class="card-row">
+      <div><div class="card-name">${r.icon} ${r.name}</div><div class="card-sub">${r.description}</div></div>
+      <div class="card-actions" style="margin-top:0">
+        <button class="btn-edit" onclick='openModal("region",${enc(r)})'>Edit</button>
+        <button class="btn-del" onclick="delItem('region',${r.id})">Delete</button>
+      </div>
+    </div>
+  </div>`).join('');
+
+  return`<div class="sec-label">ROAD TRIPS</div>${trips}
+  <button class="add-btn" onclick="openModal('roadtrip',null)">＋ Add Road Trip</button>
+  <div class="divider"></div>
+  <div class="sec-label">STAYS</div>${stays}
+  <button class="add-btn" onclick="openModal('stay',null)">＋ Add Stay</button>
+  <div class="divider"></div>
+  <div class="sec-label">REGIONS / ARCS</div>${regions}
+  <button class="add-cat-btn" onclick="openModal('region',null)">＋ Add Region or Arc</button>`;
+}
+
+function renderMLB(){
+  const v=vc();
+  const clusters=['All',...new Set(S.data.mlb.map(s=>s.cluster))];
+  const filtered=S.mlbF==='All'?S.data.mlb:S.data.mlb.filter(s=>s.cluster===S.mlbF);
+  return`<div class="mlb-prog">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:14px;font-weight:600">Stadiums Visited</span>
+      <span style="font-size:22px;font-family:'Bebas Neue',sans-serif;color:#38bdf8">${v} / 30</span>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" style="width:${(v/30*100).toFixed(1)}%"></div></div>
+  </div>
+  <div class="tab-row">${clusters.map(c=>`<button class="tab${S.mlbF===c?' active':''}" onclick="setF('${c}')">${c}</button>`).join('')}</div>
+  <div class="stad-grid">${filtered.map(s=>`<div class="stad-card${s.visited?' visited':''}" onclick="togS(${s.id})">
+    <span class="stad-check">${s.visited?'✅':'⬜'}</span>
+    <div class="stad-team">${s.team}</div>
+    <div style="font-size:11px;color:#6b7280;margin-top:2px">${s.city}</div>
+  </div>`).join('')}</div>`;
+}
+
+function renderCategoryModule(data,itemType,editType,catType,addItemFn,addCatFn,delItemType,delCatType){
+  const grouped=grp(data.items,'category');
+  const cats=data.categories.map(cat=>{
+    const items=grouped[cat.name]||[];
+    const itemsHTML=items.map(item=>{
+      let details='';
+      if(itemType==='home')details=`<div class="act-time">${item.timeframe||''}</div>`;
+      return`<div class="act-card">
+        <div class="act-row"><div><div class="act-name">${item.name}</div>${details}</div>${bdg(item.status)}</div>
+        <div class="card-actions">
+          <button class="btn-edit" onclick='openModal("${editType}",${enc(item)})'>Edit</button>
+          <button class="btn-del" onclick="delItem('${delItemType}',${item.id})">Delete</button>
+        </div>
+      </div>`;}).join('');
+    return`<div class="cat-group">
+      <div class="cat-head">
+        <div class="cat-head-left"><span>${cat.icon}</span>${cat.name}</div>
+        <div style="display:flex;gap:6px">
+          <button class="btn-edit" onclick='openModal("${catType}",${enc(cat)})'>Edit</button>
+          <button class="btn-del-cat" onclick="delItem('${delCatType}',${cat.id},null,'${cat.name}')">✕</button>
+        </div>
+      </div>
+      ${cat.description?`<div style="font-size:12px;color:#6b7280;margin-bottom:10px">${cat.description}</div>`:''}
+      ${itemsHTML}
+    </div>`;}).join('');
+  return cats+
+    `<button class="add-btn" onclick="${addItemFn}">＋ Add Item</button>
+     <button class="add-cat-btn" onclick="${addCatFn}">＋ Add Category</button>`;
+}
+
+function renderHomeLife(){
+  return renderCategoryModule(S.data.homeLife,'home','homelife','homecat',
+    "openModal('homelife',null)","openModal('homecat',null)",'homelife','homecat');
+}
+
+function renderHobbies(){
+  return renderCategoryModule(S.data.hobbies,'hobby','hobby','hobbycat',
+    "openModal('hobby',null)","openModal('hobbycat',null)",'hobby','hobbycat');
+}
+
+function renderCustomModule(mod){
+  if(mod.itemType==='custom-simple'){
+    const items=mod.items.map(item=>`<div class="act-card">
+      <div class="act-row"><div><div class="act-name">${item.name}</div>${item.description?`<div class="act-desc">${item.description}</div>`:''}</div>${bdg(item.status)}</div>
+      <div class="card-actions">
+        <button class="btn-edit" onclick='S.modal.modId=${mod.id};openModal("customitem",${enc(item)})'>Edit</button>
+        <button class="btn-del" onclick="delItem('customitem',${item.id},${mod.id})">Delete</button>
+      </div>
+    </div>`).join('');
+    return items+`<button class="add-btn" onclick="S.modal={type:'customitem',item:null,modId:${mod.id}};render()">＋ Add Item</button>`;
+  }
+  const grouped=grp(mod.items,'category');
+  const cats=mod.categories.map(cat=>{
+    const items=grouped[cat.name]||[];
+    const itemsHTML=items.map(item=>`<div class="act-card">
+      <div class="act-row"><div>
+        <div class="act-name">${item.name}</div>
+        ${item.timeframe?`<div class="act-time">${item.timeframe}</div>`:''}
+      </div>${bdg(item.status)}</div>
+      <div class="card-actions">
+        <button class="btn-edit" onclick='S.modal={type:"customitem",item:${enc(item)},modId:${mod.id}};render()'>Edit</button>
+        <button class="btn-del" onclick="delItem('customitem',${item.id},${mod.id})">Delete</button>
+      </div>
+    </div>`).join('');
+    return`<div class="cat-group">
+      <div class="cat-head">
+        <div class="cat-head-left"><span>${cat.icon||'📌'}</span>${cat.name}</div>
+        <div style="display:flex;gap:6px">
+          <button class="btn-edit" onclick='S.modal={type:"customcat",item:${enc(cat)},modId:${mod.id}};render()'>Edit</button>
+          <button class="btn-del-cat" onclick="delItem('customcat',${cat.id},${mod.id},'${cat.name}')">✕</button>
+        </div>
+      </div>
+      ${itemsHTML}
+    </div>`;}).join('');
+  return cats+
+    `<button class="add-btn" onclick="S.modal={type:'customitem',item:null,modId:${mod.id}};render()">＋ Add Item</button>
+     <button class="add-cat-btn" onclick="S.modal={type:'customcat',item:null,modId:${mod.id}};render()">＋ Add Category</button>`;
+}
+
+function renderDetail(){
+  let content='',headClass='travel',icon='✈️',label='Travel',showDelMod=false,modId=null;
+  if(S.mod==='travel'){content=renderTravel();headClass='travel';icon='✈️';label='Travel';}
+  else if(S.mod==='mlb'){content=renderMLB();headClass='mlb';icon='⚾';label='MLB Tour';}
+  else if(S.mod==='homeLife'){content=renderHomeLife();headClass='homeLife';icon='🏡';label='Home Life';}
+  else if(S.mod==='hobbies'){content=renderHobbies();headClass='hobbies';icon='🎨';label='Hobbies';}
+  else if(S.mod&&S.mod.startsWith('custom-')){
+    modId=parseInt(S.mod.replace('custom-',''));
+    const mod=S.data.customModules.find(m=>m.id===modId);
+    if(mod){content=renderCustomModule(mod);headClass='custom';icon=mod.icon;label=mod.name;showDelMod=true;}
+  }
+  const delBtn=showDelMod?`<button class="mod-del-btn" onclick="delItem('module',${modId})">Delete Module</button>`:'';
+  return`<div class="detail">
+    <div class="detail-head ${headClass}" style="position:relative">
+      <button class="back-btn" onclick="closeMod()">← Back</button>
+      ${delBtn}
+      <div style="font-size:36px">${icon}</div>
+      <div class="detail-title">${label}</div>
+    </div>
+    <div class="detail-body">${content}</div>
+  </div>${S.modal?modalHTML():''}`;
+}
+
+function render(){document.getElementById('app').innerHTML=S.mod?renderDetail():renderHome();}
+
+window.openMod=function(m){S.mod=m;S.modal=null;render();window.scrollTo(0,0);};
+window.closeMod=function(){S.mod=null;S.modal=null;render();window.scrollTo(0,0);};
+window.togS=function(id){S.data.mlb=S.data.mlb.map(s=>s.id===id?{...s,visited:!s.visited}:s);save();render();};
+window.setF=function(f){S.mlbF=f;render();};
+window.openModal=openModal;
+window.closeModal=closeModal;
+window.delItem=function(type,id,modId,name){
+  S.modal={type:'confirm',deleteType:type,deleteId:id,deleteModId:modId,deleteName:name};render();
+};
+
+render();
+</script>
+</body>
+</html>
